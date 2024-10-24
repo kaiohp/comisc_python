@@ -1,0 +1,26 @@
+[project]
+name = "comisc-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit>=4.0.1",
+    "ruff>=0.7.0",
+]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+# (I)-> iSort, (F)->PyFlakes, (E,W)-> PyCodeStyle,(PL)->Pylint, (PT)->Pytest-style
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+
+[tool.ruff.format]
+quote-style = 'single'
