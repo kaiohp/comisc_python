@@ -2,7 +2,6 @@ from datetime import date
 from typing import Optional
 
 from src.domain.models.order import OrderLine
-from src.domain.models.product import Product
 
 
 class Batch:
@@ -17,12 +16,12 @@ class Batch:
     def __init__(
         self,
         reference: str,
-        product: Product,
+        sku: str,
         quantity: int,
         eta: Optional[date] = None,
     ):
         self.reference = reference
-        self.product = product
+        self.sku = sku
         self.eta = eta
         self._purchased_quantity = quantity
         self._allocations: set[OrderLine] = set()
@@ -72,6 +71,5 @@ class Batch:
 
     def can_allocate(self, line: OrderLine) -> bool:
         return (
-            self.product == line.product
-            and self.available_quantity >= line.quantity
+            self.sku == line.sku and self.available_quantity >= line.quantity
         )

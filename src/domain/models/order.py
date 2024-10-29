@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 
-from src.domain.models.product import Product
 
-
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class OrderLine:
     """Customers place orders.
 
@@ -12,6 +10,6 @@ class OrderLine:
     each line has SKU and quantity.
     """
 
-    reference: str
-    product: Product
+    order_reference: str
+    sku: str
     quantity: int

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass(unsafe_hash=True)
 class Product:
     """Product Model.
 
