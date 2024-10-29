@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from src.domain.models import Batch, OrderLine, Product
+from src.domain.models import Batch, OrderLine
 
 today = date.today()
 tomorrow = today + timedelta(days=1)
@@ -8,9 +8,8 @@ later = tomorrow + timedelta(days=10)
 
 
 def test_allocating_to_a_batch_reduces_the_available_quantity():
-    product = Product('SMALL-TABLE')
-    batch = Batch('batch-001', product, quantity=20, eta=today)
-    line = OrderLine('order-ref', product, 2)
+    batch = Batch('batch-001', 'SMALL-TABLE', quantity=20, eta=today)
+    line = OrderLine('order-ref', 'SMALL-TABLE', 2)
 
     batch.allocate(line)
 
@@ -20,10 +19,9 @@ def test_allocating_to_a_batch_reduces_the_available_quantity():
 
 
 def make_batch_and_line(sku, batch_qty, line_qty):
-    product = Product(sku)
     return (
-        Batch('batch-001', product, batch_qty, eta=date.today()),
-        OrderLine('order-123', product, line_qty),
+        Batch('batch-001', sku, batch_qty, eta=date.today()),
+        OrderLine('order-123', sku, line_qty),
     )
 
 
@@ -43,10 +41,8 @@ def test_can_allocate_if_available_equal_to_required():
 
 
 def test_cannot_allocate_if_skus_do_not_match():
-    batch_product = Product('UNCOMFORTABLE-CHAIR')
-    line_product = Product('EXPENSIVE-TOASTER')
-    batch = Batch('batch-001', batch_product, 100, eta=None)
-    different_sku_line = OrderLine('order-123', line_product, 10)
+    batch = Batch('batch-001', 'UNCOMFORTABLE-CHAIR', 100, eta=None)
+    different_sku_line = OrderLine('order-123', 'EXPENSIVE-TOASTER', 10)
     assert batch.can_allocate(different_sku_line) is False
 
 
