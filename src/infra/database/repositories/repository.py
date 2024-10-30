@@ -4,7 +4,7 @@ from src.data.interfaces.repository import RepositoryInterface
 from src.domain import models
 
 
-class SqlRepository(RepositoryInterface):
+class SqlAlchemyRepository(RepositoryInterface):
     def __init__(self, session: Session):
         self.session = session
 

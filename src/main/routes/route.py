@@ -1,17 +1,19 @@
 from http import HTTPStatus
 
-from src.domain.models import Batch, OrderLine, allocate
+from src.domain.models import OrderLine, allocate
+from src.infra.database.repositories.repository import SqlAlchemyRepository
 
 
 @fastapi.route.something
 def allocate_endpoint():
     session = start_session()
+    batches = SqlAlchemyRepository(session).list()
+    lines = [
+        OrderLine(record.orderid, record.product, record.quantity)
+        for record in request.body
+    ]
 
-    line = OrderLine(body.orderid, body.product, body.quantity)
-
-    batches = session.query(Batch).all()
-
-    allocate(line, batches)
+    allocate(lines, batches)
 
     session.commit()
 
