@@ -12,7 +12,11 @@ class SqlAlchemyRepository(RepositoryInterface):
         self.session.add(batch)
 
     def get(self, reference) -> models.Batch:
-        self.session.query(models.Batch).filter_by(reference=reference).one()
+        return (
+            self.session.query(models.Batch)
+            .filter_by(reference=reference)
+            .one()
+        )
 
     def list(self):
         return self.session.query(models.Batch).all()
