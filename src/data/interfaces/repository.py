@@ -11,3 +11,7 @@ class RepositoryInterface(ABC):
     @abstractmethod
     def get(self, reference) -> models.Batch:
         raise NotImplementedError
+
+    @abstractmethod
+    def list(self) -> list[models.Batch]:
+        raise NotImplementedError

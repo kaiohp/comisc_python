@@ -18,5 +18,5 @@ class SqlAlchemyRepository(RepositoryInterface):
             .one()
         )
 
-    def list(self):
+    def list(self) -> list[models.Batch]:
         return self.session.query(models.Batch).all()
