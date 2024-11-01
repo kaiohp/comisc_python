@@ -6,6 +6,7 @@ from fake_file_system import FakeFileSystem
 from sync import determine_actions, sync
 
 
+# End to End Test
 def test_when_a_file_exists_in_the_source_but_not_the_destination():
     try:
         source = tempfile.mkdtemp()
@@ -27,6 +28,7 @@ def test_when_a_file_exists_in_the_source_but_not_the_destination():
         shutil.rmtree(destination)
 
 
+# End to End Test
 def test_when_a_file_has_been_renamed_in_the_source():
     try:
         source = tempfile.mkdtemp()
@@ -53,6 +55,7 @@ def test_when_a_file_has_been_renamed_in_the_source():
         shutil.rmtree(destination)
 
 
+# Unit Test
 def test_when_a_file_exists_in_the_source_but_not_the_destination_with_abstraction():
     source_hashes = {'hash': 'file.txt'}
     destinations_hashes = {}
@@ -64,6 +67,7 @@ def test_when_a_file_exists_in_the_source_but_not_the_destination_with_abstracti
     assert list(actions) == expected_actions
 
 
+# Unit Test
 def test_when_a_file_has_been_renamed_in_the_source_with_abstraction():
     source_hashes = {'hash': 'file.txt'}
     destinations_hashes = {'hash': 'file_1.txt'}
@@ -77,6 +81,7 @@ def test_when_a_file_has_been_renamed_in_the_source_with_abstraction():
     assert list(actions) == expected_actions
 
 
+# Edge to Edge Test
 def test_when_a_file_exists_in_the_source_but_not_the_destination_with_fake_file_system():
     fake_path_hashes = {'/src': {'hash': 'file.txt'}, '/dst': {}}
     fake_file_system = FakeFileSystem(fake_path_hashes)
@@ -88,6 +93,7 @@ def test_when_a_file_exists_in_the_source_but_not_the_destination_with_fake_file
     assert fake_file_system.actions == expected_actions
 
 
+# Edge to Edge Test
 def test_when_a_file_has_been_renamed_in_the_source_with_fake_file_system():
     fake_path_hashes = {
         '/src': {'hash': 'file.txt'},
