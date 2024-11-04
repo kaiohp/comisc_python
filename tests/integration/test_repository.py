@@ -16,26 +16,52 @@ def test_repository_can_save_a_batch(session: Session):
     )
     rows = session.execute(query)
 
-    assert list(rows) == [batch]
+    assert list(rows) == [('batch1', 'RUSTY-SOAPDISH', 100, None)]
 
 
 def insert_order_line(session):
-    session.execute(
-        'INSERT INTO order_lines (orderid, sku, quantity)'
+    insert_query = text(
+        'INSERT INTO order_lines (order_reference, sku, quantity)'
         'VALUES ("order1", "GENERIC-SOFA", 12)'
     )
+    session.execute(insert_query)
 
+    select_query = text(
+        'SELECT id FROM order_lines WHERE order_reference=:order_reference AND sku=:sku'
+    )
     [[order_line_id]] = session.execute(
-        'SELECT id FROM order_lines WHERE orderid =:orderid AND sky=:sku',
-        dict(orderid='order1', sku='GENERIC-SOFA'),
+        select_query,
+        dict(order_reference='order1', sku='GENERIC-SOFA'),
     )
     return order_line_id
 
 
-def insert_batch(session, batch_id): ...
+def insert_batch(session, batch_id):
+    insert_query = text(
+        'INSERT INTO batches (reference, sku, _purchased_quantity, eta)'
+        'VALUES (:reference, "GENERIC-SOFA", 100, null)'
+    )
+    session.execute(insert_query, dict(reference=batch_id))
+
+    select_query = text(
+        'SELECT id FROM batches WHERE reference=:reference AND sku="GENERIC-SOFA"'
+    )
+    [[order_line_id]] = session.execute(
+        select_query,
+        dict(reference=batch_id),
+    )
+    return order_line_id
 
 
-def insert_allocation(session, orderline_id, batch_id): ...
+def insert_allocation(session, order_line_id, batch_id):
+    query = text(
+        'INSERT INTO allocations (order_line_id, batch_id)'
+        'VALUES (:order_line_id, :batch_id)'
+    )
+    session.execute(
+        query,
+        dict(order_line_id=order_line_id, batch_id=batch_id),
+    )
 
 
 def test_repository_can_retrieve_a_batch_with_allocations(session):
