@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=cosmic
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=allocation
+    ports:
+      - 5432:5432
+  pg-admin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@cosmic.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
