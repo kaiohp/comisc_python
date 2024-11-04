@@ -1,9 +1,6 @@
 from sqlalchemy import text
 
 from src.domain import models
-from src.infra.database.orm import start_mappers
-
-start_mappers()
 
 
 def test_orderline_mapper_can_load_lines(session):
