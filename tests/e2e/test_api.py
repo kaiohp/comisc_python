@@ -1,8 +1,6 @@
 import uuid
 from http import HTTPStatus
 
-import requests
-
 
 def random_suffix():
     return uuid.uuid4().hex[:6]
@@ -20,7 +18,7 @@ def random_order_ref(name='reference'):
     return f'order-{name}-{random_suffix()}'
 
 
-def test_api_returns_allocation(add_stock, get_api_url):
+def test_api_returns_allocation(add_stock, client):
     sku, othersku = random_sku(), random_sku('other')
     earlybatch = random_batch_ref('1')
     laterbatch = random_batch_ref('2')
@@ -35,9 +33,12 @@ def test_api_returns_allocation(add_stock, get_api_url):
     )
 
     data = {'order_reference': random_order_ref(), 'sku': sku, 'quantity': 3}
-    url = get_api_url
 
-    r = requests.post(f'{url}/allocate', json=data, timeout=10)
+    response = client.post(
+        '/allocate',
+        json=data,
+        timeout=10,
+    )
 
-    assert r.status_code == HTTPStatus.CREATED
-    assert r.json()['batchref'] == earlybatch
+    assert response.status_code == HTTPStatus.CREATED
+    assert response.json()['batch_ref'] == earlybatch
