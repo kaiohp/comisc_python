@@ -1,6 +1,4 @@
-from http import HTTPStatus
-
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -13,7 +11,7 @@ get_session = sessionmaker(bind=create_engine(Settings().database_url))
 router = APIRouter()
 
 
-@router.post('/allocate')
+@router.post('/allocate', status_code=status.HTTP_201_CREATED)
 def allocate_endpoint(order_line: OrderLineSchema):
     session = get_session()
     batches = SqlAlchemyRepository(session).list()
@@ -22,4 +20,4 @@ def allocate_endpoint(order_line: OrderLineSchema):
 
     session.commit()
 
-    return HTTPStatus.CREATED, {'batchref:': batch_reference}
+    return {'batch_ref': batch_reference}
