@@ -1,14 +1,10 @@
-import os
-
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import clear_mappers, sessionmaker
 
 from src.infra.database import orm
 from src.infra.database.config import Settings
 from src.infra.database.metadata import metadata
-from src.main.server import app
 
 
 @pytest.fixture
@@ -80,15 +76,3 @@ def add_stock(postgres_session):
             dict(sku=sku),
         )
         postgres_session.commit()
-
-
-@pytest.fixture
-def get_api_url():
-    host = os.environ.get('API_HOST', 'localhost')
-    port = 8000 if host == 'localhost' else 80
-    return f'http://{host}:{port}'
-
-
-@pytest.fixture
-def client():
-    return TestClient(app)
