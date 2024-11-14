@@ -52,7 +52,7 @@ def test_api_returns_allocation(add_stock, client):
         timeout=10,
     )
 
-    assert response.status_code == HTTPStatus.CREATED
+    assert response.status_code == HTTPStatus.ACCEPTED
     assert response.json()['batch_ref'] == earlybatch
 
 
@@ -69,11 +69,11 @@ def test_allocations_are_persisted(add_stock, client):
     line2 = {'order_reference': order2, 'sku': sku, 'quantity': 10}
 
     response = client.post('/allocate', json=line1, timeout=10)
-    assert response.status_code == HTTPStatus.CREATED
+    assert response.status_code == HTTPStatus.ACCEPTED
     assert response.json()['batch_ref'] == batch1
 
     response = client.post('/allocate', json=line2, timeout=10)
-    assert response.status_code == HTTPStatus.CREATED
+    assert response.status_code == HTTPStatus.ACCEPTED
     assert response.json()['batch_ref'] == batch2
 
 
@@ -103,3 +103,31 @@ def test_400_detail_for_invalid_sku(add_stock, client):
     response = client.post('/allocate', json=data, timeout=10)
     assert response.status_code == HTTPStatus.BAD_REQUEST
     assert response.json()['detail'] == f'Invalid sku {unknown_sku}'
+
+
+def test_deallocate(add_stock, client):
+    sku = random_sku()
+    batch = random_batch_ref()
+    order1, order2 = random_order_ref('1'), random_order_ref('2')
+
+    add_stock([(batch, sku, 100, '2011-01-02')])
+
+    order1_data = {'order_reference': order1, 'sku': sku, 'quantity': 100}
+    response = client.post('/allocate', json=order1_data, timeout=10)
+
+    assert response.json()['batch_ref'] == batch
+
+    order2_data = {'order_reference': order2, 'sku': sku, 'quantity': 100}
+    response = client.post('/allocate', json=order2_data, timeout=10)
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json()['detail'] == f'Out of stock for sku {sku}'
+
+    response = client.post('/deallocate', json=order1_data, timeout=10)
+
+    assert response.status_code == HTTPStatus.ACCEPTED
+
+    response = client.post('/allocate', json=order2_data, timeout=10)
+
+    assert response.status_code == HTTPStatus.ACCEPTED
+    assert response.json()['batch_ref'] == batch
