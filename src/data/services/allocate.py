@@ -12,8 +12,15 @@ def is_valid_sku(sku, batches: list[Batch]):
     return any(batch.sku == sku for batch in batches)
 
 
-def allocate(line: OrderLine, repo: RepositoryInterface, session) -> str:
+def allocate(
+    order_reference: str,
+    sku: str,
+    quantity: int,
+    repo: RepositoryInterface,
+    session,
+) -> str:
     batches = repo.list()
+    line = OrderLine(order_reference, sku, quantity)
 
     if not is_valid_sku(line.sku, batches):
         raise InvalidSku(f'Invalid sku {line.sku}')
